@@ -1,26 +1,30 @@
-// pdfUploader.js
+// pdfUploader.js nodejs script to upload PDF files to the endpoint
 
 import axios from 'axios';
-import FormData from 'form-data'; // Use default import here
+import FormData from 'form-data';
 import fs from 'fs';
 
-async function uploadPDF(pdfFilePath) {
+async function uploadPDFs(pdfFilePaths) {
   try {
-    // Read the PDF file as binary data
-    const pdfData = fs.readFileSync(pdfFilePath);
-
-    // Create a FormData object and append the PDF data
+    // Create a FormData object
     const formData = new FormData();
-    formData.append('file', pdfData, 'uploaded_pdf.pdf');
+
+    console.log('pdfFilePaths: ', pdfFilePaths);
+
+    // Append each PDF file to the FormData object
+    pdfFilePaths.forEach((pdfFilePath, index) => {
+      const pdfData = fs.readFileSync(pdfFilePath);
+      formData.append(`file${index}`, pdfData, `uploaded_pdf_${index}.pdf`);
+    });
 
     const ora = (await import('ora')).default;
 
     // Create a spinner instance and start it
-    const spinner = ora('Uploading PDF...').start();
+    const spinner = ora('Uploading PDFs...').start();
 
-    // Send the PDF file to the Azure Function
+    // Send the PDF files to the endpoint
     const response = await axios.post(
-      'https://gentlegiantschatbot.azurewebsites.net/api/pdfsummaryfunction',
+      'http://127.0.0.1:5000/pdfsummary',
       formData,
       {
         headers: formData.getHeaders(),
@@ -30,24 +34,23 @@ async function uploadPDF(pdfFilePath) {
     // Stop the spinner
     spinner.stop();
 
-    // Handle the response from the Azure Function
+    // Handle the response from the endpoint
     if (response.status === 200) {
       const responseData = response.data;
       console.log('responseData: ', responseData);
-      // Use the response data (e.g., display the summary, notes, and essentials summary)
-      console.log('Success: PDF processed successfully');
+      console.log('Success: PDFs processed successfully');
     } else {
-      console.error('Error: Failed to process PDF');
+      throw new Error('Error: Failed to process PDFs');
     }
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('Error:', error);
   }
 }
 
-const pdfFilePath = process.argv[2];
+const pdfFilePaths = process.argv.slice(2);
 
-if (pdfFilePath) {
-  uploadPDF(pdfFilePath);
+if (pdfFilePaths.length > 0) {
+  uploadPDFs(pdfFilePaths);
 } else {
-  console.error('Error: Please provide a PDF file path');
+  console.error('Error: Please provide one or more PDF file paths');
 }
