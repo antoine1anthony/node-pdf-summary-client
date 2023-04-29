@@ -1,53 +1,58 @@
-# PDF Uploader README
+PDF Uploader from Directory README
+==================================
 
-This is a Node.js script that uploads one or more PDF files to the PDF summary endpoint. After successful upload, the endpoint processes the PDF files and returns the results. This script is a helpful utility to automate the process of uploading and summarizing PDF files.
+This is a Node.js script that uploads all PDF files in a specified directory to the PDF summary endpoint. After successful upload, the endpoint processes the PDF files and returns the results. This script is a helpful utility to automate the process of uploading and summarizing PDF files from a directory.
 
-## Prerequisites
+Prerequisites
+-------------
 
 Before using this script, ensure that you have the following software installed on your machine:
 
-1\. Node.js (version 14 or higher)
+1.  Node.js (version 14 or higher)
 
-## Installation
+Installation
+------------
 
 To use this script, follow these steps:
 
-1\. Download or clone the repository containing the script.
+1.  Download or clone the repository containing the script.
+2.  Open a terminal and navigate to the directory containing the script.
+3.  Run `npm install` to install the required dependencies (axios, form-data, ora, and path).
 
-2\. Open a terminal and navigate to the directory containing the script.
-
-3\. Run `npm install` to install the required dependencies (axios, form-data, and ora).
-
-## Usage
+Usage
+-----
 
 To run the script, use the following command:
 
-```
+phpCopy code
 
-node <script_filename> <pdf_file_path_1> <pdf_file_path_2> ...
+`node <script_filename> `
 
-```
+Replace `<script_filename>` with the name of the script file (e.g., `pdf_uploader_from_directory.js`).
 
-Replace `<script_filename>` with the name of the script file (e.g., `pdf_uploader.js`), and provide the paths to the PDF files you want to upload as arguments. You can provide any number of PDF files as arguments, separated by spaces.
+By default, the script looks for PDF files in a directory named `PDFs`. If you want to change the directory, modify the value of the `pdfDirectory` variable in the script.
 
-For example, if you have two PDF files named `file1.pdf` and `file2.pdf` in the same directory as the script, you can run the following command:
+For example, if you want to use a directory named `my_pdfs`, update the script as follows:
 
-```
+javascriptCopy code
 
-node pdf_uploader.js file1.pdf file2.pdf
+`// Directory containing the PDF files
+const pdfDirectory = 'my_pdfs';`
 
-```
-
-## Output
+Output
+------
 
 The script displays a spinner while the PDF files are being uploaded. Once the upload and processing are complete, it prints the results to the console.
 
 If the files are processed successfully, you'll see a "Success: PDFs processed successfully" message, along with the response data from the endpoint. If there's an error during the upload or processing, an appropriate error message will be displayed.
 
-## Notes
+If there are no PDF files in the specified directory, the script will display an "Error: No PDF files found in the specified directory" message.
+
+Notes
+-----
 
 This script assumes that the PDF summary endpoint is located at `http://127.0.0.1:8000/pdfsummary`. If the endpoint is hosted on a different address, you should update the URL in the `axios.post` function call.
 
-This script only supports PDF files. If you try to upload a non-PDF file, the endpoint may return an error.
+This script only supports PDF files. If the specified directory contains non-PDF files, they will be ignored.
 
 If you need to add additional headers, such as authentication tokens, you can modify the `headers` object in the `axios.post` function call.

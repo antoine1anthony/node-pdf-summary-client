@@ -2,6 +2,7 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
+import path from 'path';
 
 async function uploadPDFs(pdfFilePaths) {
   try {
@@ -46,10 +47,18 @@ async function uploadPDFs(pdfFilePaths) {
   }
 }
 
-const pdfFilePaths = process.argv.slice(2);
+// Directory containing the PDF files
+const pdfDirectory = 'PDFs';
+
+// Read the contents of the PDFs directory
+const files = fs.readdirSync(pdfDirectory);
+
+// Filter the files to include only PDF files
+const pdfFilePaths = files.filter(file => path.extname(file).toLowerCase() === '.pdf')
+  .map(file => path.join(pdfDirectory, file));
 
 if (pdfFilePaths.length > 0) {
   uploadPDFs(pdfFilePaths);
 } else {
-  console.error('Error: Please provide one or more PDF file paths');
+  console.error('Error: No PDF files found in the specified directory');
 }
