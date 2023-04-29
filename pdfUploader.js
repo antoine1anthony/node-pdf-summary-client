@@ -1,5 +1,4 @@
-// pdfUploader.js nodejs script to upload PDF files to the endpoint
-
+// Description: Uploads PDF files to the PDF summary endpoint (node script)
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
@@ -11,10 +10,10 @@ async function uploadPDFs(pdfFilePaths) {
 
     console.log('pdfFilePaths: ', pdfFilePaths);
 
-    // Append each PDF file to the FormData object
+    // Append each PDF file to the FormData object (use the key 'pdfs')
     pdfFilePaths.forEach((pdfFilePath, index) => {
       const pdfData = fs.readFileSync(pdfFilePath);
-      formData.append(`file${index}`, pdfData, `uploaded_pdf_${index}.pdf`);
+      formData.append('pdfs', pdfData, `uploaded_pdf_${index}.pdf`);
     });
 
     const ora = (await import('ora')).default;
@@ -24,7 +23,7 @@ async function uploadPDFs(pdfFilePaths) {
 
     // Send the PDF files to the endpoint
     const response = await axios.post(
-      'http://127.0.0.1:5000/pdfsummary',
+      'http://127.0.0.1:8000/pdfsummary',
       formData,
       {
         headers: formData.getHeaders(),
