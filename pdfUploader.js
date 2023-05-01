@@ -53,8 +53,7 @@ async function uploadPDF(pdfFilePath) {
         'summary',
         'notes',
         'notes_summary',
-        'essential_info',
-        'blog_post',
+        'essential_info'
       ];
       fields.forEach((field) => {
         if (responseData[field]) {

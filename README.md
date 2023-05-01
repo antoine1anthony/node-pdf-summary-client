@@ -60,4 +60,4 @@ This script only supports PDF files. If the specified directory contains non-PDF
 
 If you need to add additional headers, such as authentication tokens, you can modify the `headers` object in the `axios.post` function call.
 
-You can customize the response fields to save by modifying the `fields` array in the script. Currently, it saves the following fields: 'summary', 'notes', 'notes_summary', 'essential_info', and 'blog_post'.
+You can customize the response fields to save by modifying the `fields` array in the script. Currently, it saves the following fields: 'summary', 'notes', 'notes_summary', and 'essential_info'.
