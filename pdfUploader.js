@@ -6,18 +6,17 @@ import path from 'path';
 import ora from 'ora';
 
 async function uploadPDF(pdfFilePath) {
+  // Create a spinner instance
+  const spinner = ora('Uploading PDF...').start(); // Start the spinner with a message
+
   try {
     // Create a FormData object
     const formData = new FormData();
-
     // Append the PDF file to the FormData object (use the key 'pdfs')
     const pdfData = fs.readFileSync(pdfFilePath);
     formData.append('pdfs', pdfData, path.basename(pdfFilePath));
 
-    // Create a spinner instance
-    const spinner = ora('Uploading PDF...').start(); // Start the spinner with a message
-
-    // Start the response timer
+    // // Start the response timer
     console.time('Response Time');
 
     // Send the PDF file to the endpoint
