@@ -16,9 +16,6 @@ async function uploadPDF(pdfFilePath) {
     const pdfData = fs.readFileSync(pdfFilePath);
     formData.append('pdfs', pdfData, path.basename(pdfFilePath));
 
-    // // Start the response timer
-    console.time('Response Time');
-
     // Send the PDF file to the endpoint
     const response = await axios.post(
       'http://127.0.0.1:8000/pdfsummary',
@@ -27,9 +24,6 @@ async function uploadPDF(pdfFilePath) {
         headers: formData.getHeaders(),
       },
     );
-
-    // Stop the response timer
-    console.timeEnd('Response Time');
 
     // Stop the spinner
     spinner.stop();
@@ -48,12 +42,7 @@ async function uploadPDF(pdfFilePath) {
       console.log('responseDirectory: ', responseDirectory);
 
       // Save each field of the response data as a separate file in the created directory
-      const fields = [
-        'summary',
-        'notes',
-        'notes_summary',
-        'essential_info'
-      ];
+      const fields = ['summary', 'notes', 'notes_summary', 'essential_info'];
       fields.forEach((field) => {
         if (responseData[field]) {
           const filePath = path.join(responseDirectory, `${field}.txt`);
@@ -72,34 +61,40 @@ async function uploadPDF(pdfFilePath) {
   }
 }
 
-// Start the script timer
-console.time('Script Time');
+function main() {
+  // Start the script timer
+  console.time('Script Time');
 
-// Directory containing the PDF files
-const pdfDirectory = 'PDFs';
+  // Directory containing the PDF files
+  const pdfDirectory = 'PDFs';
 
-// Read the contents of the PDFs directory
-const files = fs.readdirSync(pdfDirectory);
+  // Read the contents of the PDFs directory
+  const files = fs.readdirSync(pdfDirectory);
 
-// Filter the files to include only PDF files
-const pdfFilePaths = files
-  .filter((file) => path.extname(file).toLowerCase() === '.pdf')
-  .map((file) => path.join(pdfDirectory, file));
+  // Filter the files to include only PDF files
+  const pdfFilePaths = files
+    .filter((file) => path.extname(file).toLowerCase() === '.pdf')
+    .map((file) => path.join(pdfDirectory, file));
 
-if (pdfFilePaths.length > 0) {
-  // Iterate over each PDF file path and call the uploadPDF function for each file
-  Promise.all(pdfFilePaths.map(uploadPDF))
-    .then(() => {
-      // Stop the script timer after all PDFs have been processed
-      console.timeEnd('Script Time');
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      // Stop the script timer in case of error
-      console.timeEnd('Script Time');
-    });
-} else {
-  console.error('Error: No PDF files found in the specified directory');
-  // Stop the script timer if no PDF files are found
-  console.timeEnd('Script Time');
+  console.log(`Uploading ${pdfFilePaths.length} PDF files...`)
+
+  if (pdfFilePaths.length > 0) {
+    // Iterate over each PDF file path and call the uploadPDF function for each file
+    Promise.all(pdfFilePaths.map(uploadPDF))
+      .then(() => {
+        // Stop the script timer after all PDFs have been processed
+        console.timeEnd('Script Time');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Stop the script timer in case of error
+        console.timeEnd('Script Time');
+      });
+  } else {
+    console.error('Error: No PDF files found in the specified directory');
+    // Stop the script timer if no PDF files are found
+    console.timeEnd('Script Time');
+  }
 }
+
+main();
